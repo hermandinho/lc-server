@@ -22,21 +22,24 @@ let listeners = function() {
         me = socket
         console.log("NEW USER CONNECTED");
 
-        socket.on('message', function(msg) {
-            console.log(msg);
-        })
-
         socket.on('identify', function(data) {
             data.sock_id = socket.id;
             users.push(data);
             console.log("IDENTIFICATION ", data);
-
+            socket.join(data.key)
             _log("ALL USERS", users)
+        })
+
+        socket.on('message', function(msg) {
+            console.log(msg);
         })
 
         socket.on('disconnect', function(){
             console.log("USER DISCONNECTED")
             users = users.filter(u => u.sock_id !== me.id);
+            let myKey = users.filter(u => u.sock_id === me.id)[0].key;
+
+            socket.leave(myKey)
 
             _log("New USERS", users)
         })
