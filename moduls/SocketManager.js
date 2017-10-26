@@ -37,9 +37,11 @@ let listeners = function() {
         socket.on('disconnect', function(){
             console.log("USER DISCONNECTED")
             users = users.filter(u => u.sock_id !== me.id);
-            let myKey = users.filter(u => u.sock_id === me.id)[0].key;
+            let myKey = users.filter(u => u.sock_id === me.id)[0];
+            myKey = myKey.length ? myKey[0].key : null;
 
-            socket.leave(myKey)
+            if(myKey)
+                socket.leave(myKey)
 
             _log("New USERS", users)
         })
