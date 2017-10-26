@@ -38,7 +38,7 @@ let listeners = function() {
             console.log("USER DISCONNECTED")
             users = users.filter(u => u.sock_id !== me.id);
 
-            _log("New USERS", data)
+            _log("New USERS", users)
         })
     });
 }
