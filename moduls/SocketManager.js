@@ -32,6 +32,7 @@ let listeners = function() {
 
         socket.on('message', function(msg) {
             console.log(msg);
+            io.to('8b0ae-ObRc').emit('message', msg);
         })
 
         socket.on('disconnect', function(){
