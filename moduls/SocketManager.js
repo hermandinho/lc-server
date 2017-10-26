@@ -29,7 +29,7 @@ let listeners = function() {
         socket.on('identify', function(data) {
             data.sock_id = socket.id;
             users.push(data);
-            console.log("IDENTIFICATION ", data);
+            console.log("IDENTIFICATION ", users);
 
             _log("ALL USERS", data)
         })
