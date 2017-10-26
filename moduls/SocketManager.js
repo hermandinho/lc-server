@@ -20,7 +20,7 @@ let listeners = function() {
     console.log('SOCKET LISTENERS ON ........');
     io.on('connection', function(socket) {
         me = socket
-        console.log("NEW USER CONNECTED");
+        console.log("NEW USER CONNECTED : " + me.id);
 
         socket.on('identify', function(data) {
             data.sock_id = socket.id;
@@ -35,7 +35,7 @@ let listeners = function() {
         })
 
         socket.on('disconnect', function(){
-            console.log("USER DISCONNECTED")
+            console.log("USER DISCONNECTED : " + me.id)
             let myKey = users.filter(u => u.sock_id === me.id)[0];
             myKey = myKey.length ? myKey[0].key : null;
             if(myKey)
