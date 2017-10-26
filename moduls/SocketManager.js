@@ -29,9 +29,9 @@ let listeners = function() {
         socket.on('identify', function(data) {
             data.sock_id = socket.id;
             users.push(data);
-            console.log("IDENTIFICATION ", users);
+            console.log("IDENTIFICATION ", data);
 
-            _log("ALL USERS", data)
+            _log("ALL USERS", users)
         })
 
         socket.on('disconnect', function(){
