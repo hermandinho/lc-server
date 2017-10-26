@@ -39,7 +39,9 @@ let listeners = function() {
             let myKey = users.filter(u => u.sock_id === me.id)[0];
             myKey = myKey.length ? myKey[0].key : null;
             if(myKey)
-                socket.leave(myKey)
+                socket.leave(myKey, function (r) {
+                    _log('LEFT ROOM ', r);
+                })
 
             users = users.filter(u => u.sock_id !== me.id);
 
