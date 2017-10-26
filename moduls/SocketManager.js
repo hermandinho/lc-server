@@ -25,6 +25,11 @@ let listeners = function() {
         socket.on('identify', function(data) {
             data.sock_id = socket.id;
             users.push(data);
+
+            //socket.token = data.token; // For client
+            socket.userKey = data.key;
+            socket.userType = data.type;
+
             console.log("IDENTIFICATION ", data);
             socket.join(data.key)
             _log("ALL USERS", users)
@@ -32,7 +37,7 @@ let listeners = function() {
 
         socket.on('message', function(msg) {
             console.log(msg);
-            io.to('8b0ae-ObRc').emit('message', msg);
+            socket.to(socket.userKey).emit('message', msg);
         })
 
         socket.on('disconnect', function(){
