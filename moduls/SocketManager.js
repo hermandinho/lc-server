@@ -1,5 +1,6 @@
 let io = null,
-    users = [];
+    users = [],
+    me = null;
 
 let init = function(_io) {
     if(!io) {
@@ -9,9 +10,16 @@ let init = function(_io) {
     listeners();
 }
 
+let _log = (title, data) => {
+    title = title || "";
+    data = data || "";
+    console.log(title, data);
+}
+
 let listeners = function() {
     console.log('SOCKET LISTENERS ON ........');
     io.on('connection', function(socket) {
+        me = socket
         console.log("NEW USER CONNECTED");
 
         socket.on('message', function(msg) {
@@ -19,11 +27,18 @@ let listeners = function() {
         })
 
         socket.on('identify', function(data) {
+            data.sock_id = socket.id;
+            users.push(data);
             console.log("IDENTIFICATION ", data);
+
+            _log("ALL USERS", data)
         })
 
         socket.on('disconnect', function(){
             console.log("USER DISCONNECTED")
+            users = users.filter(u => u.sock_id !== me.id);
+
+            _log("New USERS", data)
         })
     });
 }
