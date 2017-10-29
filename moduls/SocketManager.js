@@ -21,6 +21,15 @@ let _log = (title, data) => {
     console.log(title, data);
 }
 
+let signalPresense = (socket, data, online) => {
+    let eventType = online ? 'online' : 'offline';
+    if(data.type === USER_TYPES.SITE) {
+        socket.to(data.license + '_' + USER_TYPES.VISITOR).emit(eventType, data);
+    } else {
+        socket.to(data.license + '_' + USER_TYPES.SITE).emit(eventType, data);
+    }
+}
+
 let listeners = function() {
     console.log('SOCKET LISTENERS ON ........');
     io.on('connection', function(socket) {
@@ -44,11 +53,8 @@ let listeners = function() {
 
             socket.join(room_id)
 
-            if(data.type === USER_TYPES.SITE) {
-                socket.to(data.license + '_' + USER_TYPES.VISITOR).emit('online');
-            } else {
-                socket.to(data.license + '_' + USER_TYPES.SITE).emit('online', data);
-            }
+            signalPresense(socket, data, true);
+
             _log("ALL USERS [" + users.length + "]", users);
         })
 
@@ -67,6 +73,8 @@ let listeners = function() {
                 })*/
 
             users = users.filter(u => u.sock_id !== socket.id);
+
+            signalPresense(socket, data, false);
 
             _log("New USERS", users)
         })
