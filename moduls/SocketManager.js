@@ -40,7 +40,7 @@ let listeners = function() {
 
             console.log("IDENTIFICATION ", data);
             socket.join(data.key)
-            _log("ALL USERS", users)
+            _log("ALL USERS [" + users.length + "]", users);
         })
 
         socket.on('message', function(msg) {
