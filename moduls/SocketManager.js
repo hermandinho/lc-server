@@ -39,7 +39,16 @@ let listeners = function() {
             socket.userType = data.type;
 
             console.log("IDENTIFICATION ", data);
-            socket.join(data.key)
+
+            let room_id = data.license + '_' + data.type;
+
+            socket.join(room_id)
+
+            if(data.type === USER_TYPES.SITE) {
+                socket.to(data.license + '_' + USER_TYPES.VISITOR).emit('online');
+            } else {
+                socket.to(data.license + '_' + USER_TYPES.SITE).emit('online');
+            }
             _log("ALL USERS [" + users.length + "]", users);
         })
 
