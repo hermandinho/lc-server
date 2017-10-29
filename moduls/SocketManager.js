@@ -47,7 +47,7 @@ let listeners = function() {
             if(data.type === USER_TYPES.SITE) {
                 socket.to(data.license + '_' + USER_TYPES.VISITOR).emit('online');
             } else {
-                socket.to(data.license + '_' + USER_TYPES.SITE).emit('online');
+                socket.to(data.license + '_' + USER_TYPES.SITE).emit('online', data);
             }
             _log("ALL USERS [" + users.length + "]", users);
         })
