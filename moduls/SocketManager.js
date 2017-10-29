@@ -75,6 +75,8 @@ let listeners = function() {
 
             users = users.filter(u => u.sock_id !== socket.id);
 
+            console.debug('USER GONE ', myData);
+
             signalPresense(socket, myData, false);
 
             _log("New USERS", users)
