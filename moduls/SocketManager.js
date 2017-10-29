@@ -71,10 +71,11 @@ let listeners = function() {
                 socket.leave(myKey, function (r) {
                     _log('LEFT ROOM ', r);
                 })*/
+            let myData = users.filter(u => u.sock_id == socket.id)[0];
 
             users = users.filter(u => u.sock_id !== socket.id);
 
-            signalPresense(socket, data, false);
+            signalPresense(socket, me, false);
 
             _log("New USERS", users)
         })
