@@ -2,6 +2,11 @@ let io = null,
     users = [],
     me = null;
 
+const USER_TYPES = {
+    VISITOR: 0,
+    SITE: 1
+};
+
 let init = function(_io) {
     if(!io) {
         io = _io;
@@ -22,12 +27,15 @@ let listeners = function() {
         me = socket
         console.log("NEW USER CONNECTED : " + me.id);
 
+        /**
+         * Identification of both front and backend Users
+         */
         socket.on('identify', function(data) {
             data.sock_id = socket.id;
             users.push(data);
 
             //socket.token = data.token; // For client
-            socket.userKey = data.key;
+            socket.userKey = data.license;
             socket.userType = data.type;
 
             console.log("IDENTIFICATION ", data);
@@ -49,7 +57,7 @@ let listeners = function() {
                     _log('LEFT ROOM ', r);
                 })*/
 
-            users = users.filter(u => u.sock_id !== me.id);
+            users = users.filter(u => u.sock_id !== socket.userKey);
 
             _log("New USERS", users)
         })
