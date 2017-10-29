@@ -57,7 +57,7 @@ let listeners = function() {
                     _log('LEFT ROOM ', r);
                 })*/
 
-            users = users.filter(u => u.sock_id !== socket.userKey);
+            users = users.filter(u => u.sock_id !== socket.id);
 
             _log("New USERS", users)
         })
