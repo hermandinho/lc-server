@@ -34,10 +34,9 @@ let signalPresense = (socket, data, online) => {
             setTimeout(function() {
                 io.to(socket.id).emit(eventType, check[0]);
                 //socket.to(check[0].license + '_' + USER_TYPES.VISITOR).emit(eventType, check[0]);
-                console.log('**************** EMITTING INITIAL STATUS ****************************');
-            }, 1500);
+            });
         } else {
-            console.log('**************** EMITTING INITIAL STATUS: SITE NOT ONLINE ****************************');
+            // Site offline
         }
     }
 }
