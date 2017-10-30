@@ -23,7 +23,8 @@ let _log = (title, data) => {
 
 let signalPresense = (socket, data, online) => {
     let eventType = online ? 'online' : 'offline';
-    if(data && data.type === USER_TYPES.SITE) {
+    if(!data) return;
+    if(data.type === USER_TYPES.SITE) {
         socket.to(data.license + '_' + USER_TYPES.VISITOR).emit(eventType, data);
     } else {
         socket.to(data.license + '_' + USER_TYPES.SITE).emit(eventType, data);
