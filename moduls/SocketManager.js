@@ -27,6 +27,8 @@ let signalPresense = (socket, data, online) => {
     if(data.type === USER_TYPES.SITE) {
         socket.to(data.license + '_' + USER_TYPES.VISITOR).emit(eventType, data);
     } else {
+        let check = users.filter(u => u.type == USER_TYPES.SITE && u.license === data.license);
+        console.log('USER IN AND SITE = ', check);
         socket.to(data.license + '_' + USER_TYPES.SITE).emit(eventType, data);
     }
 }
