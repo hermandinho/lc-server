@@ -33,7 +33,10 @@ let signalPresense = (socket, data, online) => {
         if(check.length > 0) {
             setTimeout(function() {
                 socket.to(check[0].license + '_' + USER_TYPES.VISITOR).emit(eventType, check[0]);
+                console.log('**************** EMITTING INITIAL STATUS ****************************');
             }, 1500);
+        } else {
+            console.log('**************** EMITTING INITIAL STATUS: SITE NOT ONLINE ****************************');
         }
     }
 }
