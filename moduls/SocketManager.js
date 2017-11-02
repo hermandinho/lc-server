@@ -30,7 +30,7 @@ let signalPresense = (socket, data, online) => {
     setTimeout(() => {
         if(!data) return;
 
-        /*let hasReconected = users.filter((u) => {
+        let hasReconected = users.filter((u) => {
             if(data.type === USER_TYPES.SITE) {
                return u.license === data.license; 
             } else {
@@ -51,7 +51,7 @@ let signalPresense = (socket, data, online) => {
                 socket.to(data.license + '_' + USER_TYPES.SITE).emit('refresh-user', hasReconected[0]);
             }
             return;
-        }*/
+        }
         
         if(data.type === USER_TYPES.SITE) {
             socket.to(data.license + '_' + USER_TYPES.VISITOR).emit(eventType, data);
