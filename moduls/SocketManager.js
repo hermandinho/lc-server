@@ -38,6 +38,16 @@ let signalPresense = (socket, data, online) => {
         } else {
             // Site offline
         }
+        pushOnlineClients(socket, data.license);
+    }
+}
+
+let pushOnlineClients = (socket, license) => {
+    let clients = users.filter(u => u.license === license && u.type === USER_TYPES.VISITOR);
+    if(socket && license) {
+        socket.emit("online-clients", clients);
+    } else {
+        //
     }
 }
 
@@ -70,8 +80,7 @@ let listeners = function() {
         })
 
         socket.on('get-my-online-clients', function(data) {
-            let clients = users.filter(u => u.license === data.license && u.type === USER_TYPES.VISITOR);
-            socket.emit("online-clients", clients);
+            pushOnlineClients(socket, data.license);
         })
 
         socket.on('message', function(msg) {
