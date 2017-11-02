@@ -21,27 +21,56 @@ let _log = (title, data) => {
     console.log(title, data);
 }
 
-let signalPresense = (socket, data, online) => {
-    let eventType = online ? 'online' : 'offline';
-    if(!data) return;
-    if(data.type === USER_TYPES.SITE) {
-        socket.to(data.license + '_' + USER_TYPES.VISITOR).emit(eventType, data);
-        setTimeout(() => {
-            pushOnlineClients(socket, data.license);
-        },1000);
-    } else {
-        let check = users.filter(u => u.type == USER_TYPES.SITE && u.license === data.license);
-        socket.to(data.license + '_' + USER_TYPES.SITE).emit(eventType, data);
+let waitTime = 2000;
 
-        if(check.length > 0) {
-            setTimeout(function() {
-                io.to(socket.id).emit(eventType, check[0]);
-                //socket.to(check[0].license + '_' + USER_TYPES.VISITOR).emit(eventType, check[0]);
-            });
-        } else {
-            // Site offline
+let signalPresense = (socket, data, online) => {
+    setTimeout(() => {
+        if(!data) return;
+
+        let hasReconected = users.filter((u) => {
+            if(data.type === USER_TYPES.SITE) {
+               return u.license === data.license; 
+            } else {
+                return u.license === data.license && data.token === u.token
+            }
+        });
+
+        if(hasReconected.length > 0) {
+            data.sock_id = socket.id;
+            console.log('HAHAHAH HE CAME BACK');
+            if(data.type === USER_TYPES.VISITOR) {
+                //UPDATE DATA HERE
+                hasReconected[0].url = data.url;
+                hasReconected[0].protocol = data.protocol;
+                hasReconected[0].origin = data.origin;
+                hasReconected[0].pathname = data.pathname;
+                hasReconected[0].lang = data.lang;
+                socket.to(data.license + '_' + USER_TYPES.SITE).emit('refresh-user', hasReconected[0]);
+            }
+            return;
         }
-    }
+
+        let eventType = online ? 'online' : 'offline';
+        
+        if(data.type === USER_TYPES.SITE) {
+            socket.to(data.license + '_' + USER_TYPES.VISITOR).emit(eventType, data);
+            setTimeout(() => {
+                pushOnlineClients(socket, data.license);
+            },1000);
+        } else {
+            let check = users.filter(u => u.type == USER_TYPES.SITE && u.license === data.license);
+            socket.to(data.license + '_' + USER_TYPES.SITE).emit(eventType, data);
+    
+            if(check.length > 0) {
+                setTimeout(function() {
+                    io.to(socket.id).emit(eventType, check[0]);
+                    //socket.to(check[0].license + '_' + USER_TYPES.VISITOR).emit(eventType, check[0]);
+                });
+            } else {
+                // Site offline
+            }
+        }
+    }, waitTime)
 }
 
 let pushOnlineClients = (socket, license) => {
