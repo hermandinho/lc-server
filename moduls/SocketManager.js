@@ -39,7 +39,6 @@ let signalPresense = (socket, data, online) => {
             data.sock_id = socket.id;
             console.log('HAHAHAH HE CAME BACK');
             if(data.type === USER_TYPES.VISITOR) {
-                //UPDATE DATA HERE
                 hasReconected[0].url = data.url;
                 hasReconected[0].protocol = data.protocol;
                 hasReconected[0].origin = data.origin;
