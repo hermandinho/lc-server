@@ -71,7 +71,7 @@ let listeners = function() {
 
         socket.on('get-my-online-clients', function(data) {
             let clients = users.filter(u => u.license === data.license);
-            socket.emit(clients);
+            socket.emit("online-clients", clients);
         })
 
         socket.on('message', function(msg) {
