@@ -25,12 +25,12 @@ let waitTime = 2000;
 
 let signalPresense = (socket, data, online) => {
     let eventType = online ? 'online' : 'offline';
-
     waitTime = online ? 0 : 2000;
+
     setTimeout(() => {
         if(!data) return;
 
-        let hasReconected = users.filter((u) => {
+        /*let hasReconected = users.filter((u) => {
             if(data.type === USER_TYPES.SITE) {
                return u.license === data.license; 
             } else {
@@ -51,9 +51,7 @@ let signalPresense = (socket, data, online) => {
                 socket.to(data.license + '_' + USER_TYPES.SITE).emit('refresh-user', hasReconected[0]);
             }
             return;
-        }
-
-        
+        }*/
         
         if(data.type === USER_TYPES.SITE) {
             socket.to(data.license + '_' + USER_TYPES.VISITOR).emit(eventType, data);
@@ -71,6 +69,9 @@ let signalPresense = (socket, data, online) => {
                 });
             } else {
                 // Site offline
+            }
+            if(!online){
+                users = users.filter(u => u.sock_id !== socket.id);
             }
         }
     }, waitTime)
@@ -132,13 +133,9 @@ let listeners = function() {
                 })*/
             let myData = users.filter(u => u.sock_id == socket.id)[0];
 
-            users = users.filter(u => u.sock_id !== socket.id);
-
-            console.log('USER GONE ', myData);
+            //users = users.filter(u => u.sock_id !== socket.id);
 
             signalPresense(socket, myData, false);
-
-            _log("New USERS", users)
         })
     });
 }
