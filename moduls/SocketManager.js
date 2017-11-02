@@ -26,6 +26,7 @@ let signalPresense = (socket, data, online) => {
     if(!data) return;
     if(data.type === USER_TYPES.SITE) {
         socket.to(data.license + '_' + USER_TYPES.VISITOR).emit(eventType, data);
+        pushOnlineClients(socket, data.license);
     } else {
         let check = users.filter(u => u.type == USER_TYPES.SITE && u.license === data.license);
         socket.to(data.license + '_' + USER_TYPES.SITE).emit(eventType, data);
@@ -38,7 +39,6 @@ let signalPresense = (socket, data, online) => {
         } else {
             // Site offline
         }
-        pushOnlineClients(socket, data.license);
     }
 }
 
