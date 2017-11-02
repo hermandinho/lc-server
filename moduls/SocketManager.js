@@ -24,6 +24,9 @@ let _log = (title, data) => {
 let waitTime = 2000;
 
 let signalPresense = (socket, data, online) => {
+    let eventType = online ? 'online' : 'offline';
+
+    waitTime = eventType === "offline" ? 2000 : 0;
     setTimeout(() => {
         if(!data) return;
 
@@ -50,7 +53,7 @@ let signalPresense = (socket, data, online) => {
             return;
         }
 
-        let eventType = online ? 'online' : 'offline';
+        
         
         if(data.type === USER_TYPES.SITE) {
             socket.to(data.license + '_' + USER_TYPES.VISITOR).emit(eventType, data);
