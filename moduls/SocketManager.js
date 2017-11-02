@@ -25,10 +25,10 @@ let signalPresense = (socket, data, online) => {
     let eventType = online ? 'online' : 'offline';
     if(!data) return;
     if(data.type === USER_TYPES.SITE) {
+        socket.to(data.license + '_' + USER_TYPES.VISITOR).emit(eventType, data);
         setTimeout(() => {
-            socket.to(data.license + '_' + USER_TYPES.VISITOR).emit(eventType, data);
             pushOnlineClients(socket, data.license);
-        },800);
+        },1000);
     } else {
         let check = users.filter(u => u.type == USER_TYPES.SITE && u.license === data.license);
         socket.to(data.license + '_' + USER_TYPES.SITE).emit(eventType, data);
