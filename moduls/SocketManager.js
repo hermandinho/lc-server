@@ -45,6 +45,7 @@ let signalPresense = (socket, data, online) => {
                 hasReconected[0].origin = data.origin;
                 hasReconected[0].pathname = data.pathname;
                 hasReconected[0].lang = data.lang;
+                hasReconected[0].token = data.token;
                 socket.to(data.license + '_' + USER_TYPES.SITE).emit('refresh-user', hasReconected[0]);
             }
             return;
