@@ -112,7 +112,7 @@ let listeners = function() {
                     }
                 });
         
-                if(hasReconected.length > 0 && !online) {
+                if(hasReconected.length > 0) {
                     console.log('HAHAHAH HE CAME BACK');
                     if(myData.type === USER_TYPES.VISITOR) {
                         hasReconected[0].url = myData.url;
