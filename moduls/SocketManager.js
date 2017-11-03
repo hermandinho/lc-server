@@ -25,33 +25,9 @@ let waitTime = 2000;
 
 let signalPresense = (socket, data, online) => {
     let eventType = online ? 'online' : 'offline';
-    waitTime = online ? 1 : 2000;
 
-    setTimeout(() => {
+    //setTimeout(() => {
         if(!data) return;
-
-        let hasReconected = users.filter((u) => {
-            if(data.type === USER_TYPES.SITE) {
-               return u.license === data.license; 
-            } else {
-                return u.license === data.license && data.token === u.token
-            }
-        });
-
-        if(hasReconected.length > 0 && !online) {
-            data.sock_id = socket.id;
-            console.log('HAHAHAH HE CAME BACK');
-            if(data.type === USER_TYPES.VISITOR) {
-                hasReconected[0].url = data.url;
-                hasReconected[0].protocol = data.protocol;
-                hasReconected[0].origin = data.origin;
-                hasReconected[0].pathname = data.pathname;
-                hasReconected[0].lang = data.lang;
-                hasReconected[0].token = data.token;
-                socket.to(data.license + '_' + USER_TYPES.SITE).emit('refresh-user', hasReconected[0]);
-            }
-            return;
-        }
         
         if(data.type === USER_TYPES.SITE) {
             socket.to(data.license + '_' + USER_TYPES.VISITOR).emit(eventType, data);
@@ -71,7 +47,7 @@ let signalPresense = (socket, data, online) => {
                 // Site offline
             }
         }
-    }, waitTime)
+    //}, waitTime)
 }
 
 let pushOnlineClients = (socket, license) => {
@@ -120,19 +96,39 @@ let listeners = function() {
             socket.to(socket.userKey).emit('message', msg);
         })
 
-        socket.on('disconnect', function(){
-            console.log("USER DISCONNECTED : " + me.id)
-           /* let myKey = users.filter(u => u.sock_id === me.id)[0];
-            myKey = myKey && myKey.length ? myKey[0].key : null;
-            if(myKey)
-                socket.leave(myKey, function (r) {
-                    _log('LEFT ROOM ', r);
-                })*/
+        socket.on('disconnect', function(){            
             let myData = users.filter(u => u.sock_id == socket.id)[0];
 
             users = users.filter(u => u.sock_id !== socket.id);
 
-            signalPresense(socket, myData, false);
+            setTimeout(() => {
+                let hasReconected = users.filter((u) => {
+                    if(data.type === USER_TYPES.SITE) {
+                       return u.license === data.license && data.type === USER_TYPES.SITE; 
+                    } else {
+                        return u.license === data.license && data.token === u.token
+                    }
+                });
+        
+                if(hasReconected.length > 0 && !online) {
+                    data.sock_id = socket.id;
+                    console.log('HAHAHAH HE CAME BACK');
+                    if(data.type === USER_TYPES.VISITOR) {
+                        hasReconected[0].url = data.url;
+                        hasReconected[0].protocol = data.protocol;
+                        hasReconected[0].origin = data.origin;
+                        hasReconected[0].pathname = data.pathname;
+                        hasReconected[0].lang = data.lang;
+                        hasReconected[0].token = data.token;
+                        io.to(data.license + '_' + USER_TYPES.SITE).emit('refresh-user', hasReconected[0]);
+                    }
+                    return;
+                }
+                
+                signalPresense(socket, myData, false);
+            }, waitTime);
+
+           
         })
     });
 }
