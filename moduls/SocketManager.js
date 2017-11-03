@@ -38,7 +38,7 @@ let signalPresense = (socket, data, online) => {
             }
         });
 
-        if(hasReconected.length > 0) {
+        if(hasReconected.length > 0 && !online) {
             data.sock_id = socket.id;
             console.log('HAHAHAH HE CAME BACK');
             if(data.type === USER_TYPES.VISITOR) {
@@ -69,9 +69,6 @@ let signalPresense = (socket, data, online) => {
                 });
             } else {
                 // Site offline
-            }
-            if(!online){
-                users = users.filter(u => u.sock_id !== socket.id);
             }
         }
     }, waitTime)
@@ -133,7 +130,7 @@ let listeners = function() {
                 })*/
             let myData = users.filter(u => u.sock_id == socket.id)[0];
 
-            //users = users.filter(u => u.sock_id !== socket.id);
+            users = users.filter(u => u.sock_id !== socket.id);
 
             signalPresense(socket, myData, false);
         })
