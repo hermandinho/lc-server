@@ -116,7 +116,7 @@ let listeners = function() {
                 });
 
                 if(hasReconnected.length > 0) {
-                    _log('RECONNECTED');
+                    _log('RECONNECTED : ' + (myData.type === USER_TYPES.SITE) ? 'SITE' : 'CLIENT');
                     if(myData.type === USER_TYPES.VISITOR) {
                         hasReconnected[0].url = myData.url;
                         hasReconnected[0].protocol = myData.protocol;
