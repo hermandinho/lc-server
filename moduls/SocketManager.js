@@ -21,7 +21,7 @@ let _log = (title, data) => {
     console.log(title, data);
 }
 
-let waitTime = 2000;
+let waitTime = 5000;
 
 let signalPresense = (socket, data, online) => {
     let eventType = online ? 'online' : 'offline';
@@ -103,28 +103,27 @@ let listeners = function() {
 
             setTimeout(() => {
                 let hasReconected = users.filter((u) => {
-                    if(data.type === USER_TYPES.SITE) {
-                       return u.license === data.license && data.type === USER_TYPES.SITE; 
+                    if(myData.type === USER_TYPES.SITE) {
+                       return u.license === myData.license && myData.type === USER_TYPES.SITE; 
                     } else {
-                        return u.license === data.license && data.token === u.token
+                        return u.license === myData.license && myData.token === u.token
                     }
                 });
         
                 if(hasReconected.length > 0 && !online) {
-                    data.sock_id = socket.id;
                     console.log('HAHAHAH HE CAME BACK');
-                    if(data.type === USER_TYPES.VISITOR) {
-                        hasReconected[0].url = data.url;
-                        hasReconected[0].protocol = data.protocol;
-                        hasReconected[0].origin = data.origin;
-                        hasReconected[0].pathname = data.pathname;
-                        hasReconected[0].lang = data.lang;
-                        hasReconected[0].token = data.token;
-                        io.to(data.license + '_' + USER_TYPES.SITE).emit('refresh-user', hasReconected[0]);
+                    if(myData.type === USER_TYPES.VISITOR) {
+                        hasReconected[0].url = myData.url;
+                        hasReconected[0].protocol = myData.protocol;
+                        hasReconected[0].origin = myData.origin;
+                        hasReconected[0].pathname = myData.pathname;
+                        hasReconected[0].lang = myData.lang;
+                        hasReconected[0].token = myData.token;
+                        io.to(myData.license + '_' + USER_TYPES.SITE).emit('refresh-user', hasReconected[0]);
                     }
                     return;
                 }
-                
+
                 signalPresense(socket, myData, false);
             }, waitTime);
 
