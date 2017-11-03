@@ -25,7 +25,7 @@ let waitTime = 2000;
 
 let signalPresense = (socket, data, online) => {
     let eventType = online ? 'online' : 'offline';
-    waitTime = online ? 0 : 2000;
+    waitTime = online ? 1 : 2000;
 
     setTimeout(() => {
         if(!data) return;
