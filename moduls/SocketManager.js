@@ -16,8 +16,10 @@ let init = function(_io) {
 }
 
 let _log = (title, data) => {
+    let allowedLogs = ['ALL_USERS', 'LISTENERS_ON'];
     title = title || "";
     data = data || "";
+    if(allowedLogs.indexOf(title) === -1) return;
     console.log(title, data);
 }
 
@@ -42,10 +44,10 @@ let signalPresense = (socket, data, online) => {
 }
 
 let listeners = function() {
-    console.log('SOCKET LISTENERS ON ........');
+    _log('LISTENERS_ON');
     io.on('connection', function(socket) {
         me = socket
-        console.log("NEW USER CONNECTED : " + me.id);
+        _log("NEW USER CONNECTED : " + me.id);
 
         /**
          * Identification of both front and backend Users
@@ -58,7 +60,7 @@ let listeners = function() {
             socket.userKey = data.license;
             socket.userType = data.type;
 
-            console.log("IDENTIFICATION ", data);
+            _log("IDENTIFICATION ", data);
 
             let room_id = data.license + '_' + data.type;
 
@@ -66,16 +68,16 @@ let listeners = function() {
 
             signalPresense(socket, data, true);
 
-            _log("ALL USERS [" + users.length + "]", users);
+            _log("ALL_USERS [" + users.length + "]", users);
         })
 
         socket.on('message', function(msg) {
-            console.log(msg);
+            _log("MESSAGE ", msg);
             socket.to(socket.userKey).emit('message', msg);
         })
 
         socket.on('disconnect', function(){
-            console.log("USER DISCONNECTED : " + me.id)
+            _log("USER DISCONNECTED : " + me.id)
            /* let myKey = users.filter(u => u.sock_id === me.id)[0];
             myKey = myKey && myKey.length ? myKey[0].key : null;
             if(myKey)
@@ -86,7 +88,7 @@ let listeners = function() {
 
             users = users.filter(u => u.sock_id !== socket.id);
 
-            console.log('USER GONE ', myData);
+            _log('USER GONE ', myData);
 
             signalPresense(socket, myData, false);
 
