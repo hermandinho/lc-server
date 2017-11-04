@@ -137,6 +137,7 @@ let listeners = function() {
                     }
                 } else {
                     _log('GONE', 'GONE FOREVER ' + myData.sock_id);
+                    _log('GONE', me);
                 }
                 //signalPresense(socket, myData, false);
             }, waitTime);
