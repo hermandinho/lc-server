@@ -23,7 +23,7 @@ let _log = (title, data) => {
     console.log(title, data);
 }
 
-let waitTime = 3000;
+let waitTime = 8000;
 
 let signalPresense = (socket, data, online) => {
     let eventType = online ? 'online' : 'offline';
@@ -107,9 +107,30 @@ let listeners = function() {
 
         socket.on('disconnect', function(){
             let myData = users.filter((u) => u.sock_id === me.id);
-            
             console.log("=> ", myData);
             users = users.filter((u) => u.sock_id !== me.id);
+
+            if(myData.length === 0) return;
+            
+            setTimeout(() => {
+                let hasReconnected = users.filter(u => {
+                    if(myData.type == USER_TYPES.SITE)
+                        return myData.id == u.id;
+                    else
+                        return u.license == myData.license && myData.token == u.token;
+                })
+
+                if(hasReconnected.length > 0) {
+                    io.to(myData.license + '_' + myData.type).emit('refresh-user', hasReconnected[0]);
+                    /*if(myData.type === USER_TYPES.VISITOR) {
+                        io.to(myData.license + '_' + USER_TYPES.SITE).emit('refresh-user', hasReconnected[0]);
+                    } else {
+
+                    }*/
+                } else {
+                    signalPresense(socket, myData, false)
+                }
+            }, waitTime);
             return;
             
             
