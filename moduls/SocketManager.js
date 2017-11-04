@@ -28,28 +28,25 @@ let waitTime = 8000;
 let signalPresense = (socket, data, online) => {
     let eventType = online ? 'online' : 'offline';
 
-    //setTimeout(() => {
-        if(!data) return;
+    if(!data) return;
 
-        if(data.type === USER_TYPES.SITE) {
-            socket.to(data.license + '_' + USER_TYPES.VISITOR).emit(eventType, data);
-            setTimeout(() => {
-                pushOnlineClients(socket, data.license);
-            },1000);
+    if(data.type === USER_TYPES.SITE) {
+        socket.to(data.license + '_' + USER_TYPES.VISITOR).emit(eventType, data);
+        setTimeout(() => {
+            pushOnlineClients(socket, data.license);
+        },1000);
+    } else {
+        let check = users.filter(u => u.type == USER_TYPES.SITE && u.license === data.license);
+        socket.to(data.license + '_' + USER_TYPES.SITE).emit(eventType, data);
+
+        if(check.length > 0) {
+            setTimeout(function() {
+                io.to(socket.id).emit(eventType, check[0]);
+            });
         } else {
-            let check = users.filter(u => u.type == USER_TYPES.SITE && u.license === data.license);
-            socket.to(data.license + '_' + USER_TYPES.SITE).emit(eventType, data);
-
-            if(check.length > 0) {
-                setTimeout(function() {
-                    io.to(socket.id).emit(eventType, check[0]);
-                    //socket.to(check[0].license + '_' + USER_TYPES.VISITOR).emit(eventType, check[0]);
-                });
-            } else {
-                // Site offline
-            }
+            // Site offline
         }
-    //}, waitTime)
+    }
 }
 
 let pushOnlineClients = (socket, license) => {
@@ -107,7 +104,6 @@ let listeners = function() {
 
         socket.on('disconnect', function(){
             let myData = users.filter((u) => u.sock_id === me.id);
-            console.log("=> ", myData);
             users = users.filter((u) => u.sock_id !== me.id);
 
             if(myData.length === 0) return;
@@ -121,6 +117,7 @@ let listeners = function() {
                 })
 
                 if(hasReconnected.length > 0) {
+                    console.log("SENDING REFRESH EVENT TO " + (myData.type === USER_TYPES.SITE) ? 'SITE' : 'VISITOR')
                     io.to(myData.license + '_' + myData.type).emit('refresh-user', hasReconnected[0]);
                     /*if(myData.type === USER_TYPES.VISITOR) {
                         io.to(myData.license + '_' + USER_TYPES.SITE).emit('refresh-user', hasReconnected[0]);
