@@ -126,7 +126,7 @@ let listeners = function() {
 
                 if(hasReconnected.length > 0) {                    
                     if(myData.type === USER_TYPES.VISITOR) {
-                        _log('RECONNECTED', 'SITE');
+                        _log('RECONNECTED', 'VISITOR');
                         /*hasReconnected[0].url = myData.url;
                         hasReconnected[0].protocol = myData.protocol;
                         hasReconnected[0].origin = myData.origin;
@@ -135,7 +135,7 @@ let listeners = function() {
                         hasReconnected[0].token = myData.token;*/
                         io.to(myData.license + '_' + USER_TYPES.SITE).emit('refresh-user', hasReconnected[0]);
                     } else {
-                        _log('RECONNECTED', 'CLIENT')
+                        _log('RECONNECTED', 'SITE')
                     }
                 } else {
                     _log('GONE', 'GONE FOREVER ' + myData.sock_id);
