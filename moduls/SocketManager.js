@@ -133,6 +133,8 @@ let listeners = function() {
                         io.to(myData.license + '_' + USER_TYPES.SITE).emit('refresh-user', hasReconnected[0]);
                     }
                     return;
+                } else {
+                    _log('GONE', 'GONE FOREVER ' + myData.sock_id);
                 }
                 //signalPresense(socket, myData, false);
             }, waitTime);
