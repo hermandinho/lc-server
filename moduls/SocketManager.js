@@ -20,7 +20,7 @@ let _log = (title, data) => {
     title = title || "";
     data = data || "";
     if(allowedLogs.indexOf(title) === -1) return;
-    console.log(title, data);
+    console.log(title, data, users);
 }
 
 let waitTime = 3000;
@@ -135,7 +135,7 @@ let listeners = function() {
                         hasReconnected[0].token = myData.token;*/
                         io.to(myData.license + '_' + USER_TYPES.SITE).emit('refresh-user', hasReconnected[0]);
                     } else {
-                        _log('RECONNECTED', 'SITE')
+                        _log('RECONNECTED', 'SITE') 
                     }
                 } else {
                     _log('GONE', 'GONE FOREVER ' + myData.sock_id);
