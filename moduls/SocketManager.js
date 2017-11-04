@@ -97,13 +97,13 @@ let listeners = function() {
         })
 
         socket.on('disconnect', function(){
-            let myData = users.filter(u => u.sock_id === me.id)[0];
-            _log('GONE ', myData);
+            let myData = users.filter((u) => u.sock_id === me.id);
+            _log('GONE', myData);
 
             users = users.filter(u => u.sock_id !== socket.id);
 
             setTimeout(() => {
-                if(!myData) {
+                if(!myData || myData.length === 0) {
                     _log('GONE','GONE BUT myData Not Found')
                     return;
                 }
