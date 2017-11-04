@@ -98,7 +98,8 @@ let listeners = function() {
 
         socket.on('disconnect', function(){
             let myData = users.filter((u) => u.sock_id === me.id);
-            _log('GONE', myData, 'ME.ID = ', me.id);
+            _log('GONE', myData);
+            _log('GONE', 'ME.ID = ', me.id);
 
             users = users.filter(u => u.sock_id !== socket.id);
 
