@@ -98,7 +98,7 @@ let listeners = function() {
 
         socket.on('disconnect', function(){
             let myData = users.filter((u) => u.sock_id === me.id);
-            _log('GONE', myData, me.id);
+            _log('GONE', myData, 'ME.ID = ', me.id);
 
             users = users.filter(u => u.sock_id !== socket.id);
 
@@ -107,6 +107,7 @@ let listeners = function() {
                     _log('GONE','GONE BUT myData Not Found')
                     return;
                 }
+                myData = myData[0];
                 let hasReconnected = users.filter((u) => {
                     if(myData.type === USER_TYPES.SITE) {
                        return u.license === myData.license && myData.id === me.site_id && myData.type === USER_TYPES.SITE;
