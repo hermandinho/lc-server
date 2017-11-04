@@ -118,9 +118,10 @@ let listeners = function() {
                 }
                 myData = myData[0];
                 let hasReconnected = users.filter((u) => {
-                    _log('GONE', myData);
-                    return (myData.type === USER_TYPES.SITE) ? 
-                            (myData.id === u.id) : (u.license === myData.license && myData.token === u.token);
+                    if(myData.type == USER_TYPES.SITE)
+                        return myData.id == u.id;
+                    else
+                        return u.license == myData.license && myData.token == u.token;
                 });
 
                 if(hasReconnected.length > 0) {                    
