@@ -138,7 +138,7 @@ let listeners = function() {
                         _log('RECONNECTED', 'SITE') 
                     }
                 } else {
-                    _log('GONE', 'GONE FOREVER ' + myData.sock_id);
+                    _log('GONE', myData);
                 }
                 //signalPresense(socket, myData, false);
             }, waitTime);
