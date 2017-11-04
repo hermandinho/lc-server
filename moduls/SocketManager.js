@@ -107,7 +107,13 @@ let listeners = function() {
 
         socket.on('disconnect', function(){
             let myData = users.filter((u) => u.sock_id === me.id);
+            
+            console.log("=> ", myData);
             users = users.filter((u) => u.sock_id !== me.id);
+            return;
+            
+            
+            
 
             setTimeout(() => {
                 if(!myData || myData.length === 0) {
