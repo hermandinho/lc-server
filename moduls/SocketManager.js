@@ -125,6 +125,7 @@ let listeners = function() {
 
                     }*/
                 } else {
+                    console.log("FAILED SENDING REFRESH EVENT TO " + (myData.type === USER_TYPES.SITE) ? 'SITE' : 'VISITOR')
                     signalPresense(socket, myData, false)
                 }
             }, waitTime);
