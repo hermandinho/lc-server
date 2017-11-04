@@ -16,7 +16,7 @@ let init = function(_io) {
 }
 
 let _log = (title, data) => {
-    let allowedLogs = ['ALL_USERS', 'LISTENERS_ON', 'RECONNECTED', 'IDENTIFICATION', 'GONE'];
+    let allowedLogs = ['ALL_USERS', 'LISTENERS_ON', 'RECONNECTED', 'GONE'];
     title = title || "";
     data = data || "";
     if(allowedLogs.indexOf(title) === -1) return;
@@ -98,7 +98,7 @@ let listeners = function() {
 
         socket.on('disconnect', function(){
             let myData = users.filter((u) => u.sock_id === me.id);
-            _log('GONE', myData);
+            _log('GONE', myData, me.id);
 
             users = users.filter(u => u.sock_id !== socket.id);
 
