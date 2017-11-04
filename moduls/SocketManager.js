@@ -82,7 +82,7 @@ let listeners = function() {
 
             socket.join(room_id)
 
-            signalPresense(socket, data, true);
+            //signalPresense(socket, data, true);
 
             _log("ALL_USERS [" + users.length + "]", users);
         })
@@ -90,6 +90,14 @@ let listeners = function() {
         socket.on('get-my-online-clients', function(data) {
             pushOnlineClients(socket, data.license);
         })
+
+        socket.on('is-site-online', function(data) {
+            let check = users.filter((u) => u.type === USER_TYPES.SITE && u.license === data.license)
+
+            if(check.length > 0) {
+                socket.emit('online', check[0]);
+            }
+        });
 
         socket.on('message', function(msg) {
             _log("MESSAGE ", msg);
@@ -99,7 +107,6 @@ let listeners = function() {
         socket.on('disconnect', function(){
             let myData = users.filter((u) => u.sock_id === me.id);
             _log('GONE', myData);
-            _log('GONE', 'ME.ID = ' + me.id);
 
             users = users.filter(u => u.sock_id !== socket.id);
 
