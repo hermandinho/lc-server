@@ -89,14 +89,14 @@ let listeners = function() {
         })
 
         socket.on('get-my-online-clients', function(data) {
-            pushOnlineClients(socket, data.license);
+            //pushOnlineClients(socket, data.license);
         })
 
         socket.on('is-site-online', function(data) {
             let check = users.filter((u) => u.type === USER_TYPES.SITE && u.license === data.license)
 
             if(check.length > 0) {
-                socket.emit('online', check[0])
+                //socket.emit('online', check[0])
             }
         });
 
