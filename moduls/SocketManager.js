@@ -118,6 +118,8 @@ let listeners = function() {
                 }
                 myData = myData[0];
                 let hasReconnected = users.filter((u) => {
+                    _log('GONE', 'CONDITION : ' + ((myData.type === USER_TYPES.SITE) ? 
+                    (myData.id === u.id) : (u.license === myData.license && myData.token === u.token)));
                     return (myData.type === USER_TYPES.SITE) ? 
                             (myData.id === u.id) : (u.license === myData.license && myData.token === u.token);
                 });
@@ -137,7 +139,6 @@ let listeners = function() {
                     }
                 } else {
                     _log('GONE', 'GONE FOREVER ' + myData.sock_id);
-                    _log('GONE', me);
                 }
                 //signalPresense(socket, myData, false);
             }, waitTime);
