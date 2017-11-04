@@ -16,7 +16,7 @@ let init = function(_io) {
 }
 
 let _log = (title, data) => {
-    let allowedLogs = ['ALL_USERS', 'LISTENERS_ON', 'RECONNECTED'];
+    let allowedLogs = ['ALL_USERS', 'LISTENERS_ON', 'RECONNECTED', 'IDENTIFICATION', 'GONE'];
     title = title || "";
     data = data || "";
     if(allowedLogs.indexOf(title) === -1) return;
@@ -65,22 +65,19 @@ let listeners = function() {
     _log('LISTENERS_ON');
     io.on('connection', function(socket) {
         me = socket
-        _log("NEW USER CONNECTED : " + me.id);
-
         /**
          * Identification of both front and backend Users
          */
         socket.on('identify', function(data) {
             data.sock_id = socket.id;
+            _log("IDENTIFICATION", data);
             users.push(data);
 
             //socket.token = data.token; // For client
             me.userKey = data.license;
             me.userType = data.type;
             me.site_id = data.id;
-
-            _log("IDENTIFICATION ", data);
-
+          
             let room_id = data.license + '_' + data.type;
 
             socket.join(room_id)
@@ -106,7 +103,10 @@ let listeners = function() {
             users = users.filter(u => u.sock_id !== socket.id);
 
             setTimeout(() => {
-                if(!myData) return;
+                if(!myData) {
+                    _log('GONE','GONE BUT myData Not Found')
+                    return;
+                }
                 let hasReconnected = users.filter((u) => {
                     if(myData.type === USER_TYPES.SITE) {
                        return u.license === myData.license && myData.id === me.site_id && myData.type === USER_TYPES.SITE;
