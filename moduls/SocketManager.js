@@ -16,7 +16,7 @@ let init = function(_io) {
 }
 
 let _log = (title, data) => {
-    let allowedLogs = ['ALL_USERS', 'LISTENERS_ON', 'RECONNECTED:SITE', 'RECONNECTED:CLIENT'];
+    let allowedLogs = ['ALL_USERS', 'LISTENERS_ON', 'RECONNECTED'];
     title = title || "";
     data = data || "";
     if(allowedLogs.indexOf(title) === -1) return;
@@ -116,7 +116,7 @@ let listeners = function() {
                 });
 
                 if(hasReconnected.length > 0) {
-                    _log('RECONNECTED:' + (myData.type === USER_TYPES.SITE) ? 'SITE' : 'CLIENT');
+                    _log('RECONNECTED:');
                     if(myData.type === USER_TYPES.VISITOR) {
                         hasReconnected[0].url = myData.url;
                         hasReconnected[0].protocol = myData.protocol;
@@ -128,7 +128,6 @@ let listeners = function() {
                     }
                     return;
                 }
-
                 signalPresense(socket, myData, false);
             }, waitTime);
         })
