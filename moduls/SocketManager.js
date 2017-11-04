@@ -124,12 +124,12 @@ let listeners = function() {
                 if(hasReconnected.length > 0) {
                     _log('RECONNECTED');
                     if(myData.type === USER_TYPES.VISITOR) {
-                        hasReconnected[0].url = myData.url;
+                        /*hasReconnected[0].url = myData.url;
                         hasReconnected[0].protocol = myData.protocol;
                         hasReconnected[0].origin = myData.origin;
                         hasReconnected[0].pathname = myData.pathname;
                         hasReconnected[0].lang = myData.lang;
-                        hasReconnected[0].token = myData.token;
+                        hasReconnected[0].token = myData.token;*/
                         io.to(myData.license + '_' + USER_TYPES.SITE).emit('refresh-user', hasReconnected[0]);
                     }
                     return;
