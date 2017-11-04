@@ -95,7 +95,7 @@ let listeners = function() {
             let check = users.filter((u) => u.type === USER_TYPES.SITE && u.license === data.license)
 
             if(check.length > 0) {
-                socket.emit('online', check[0]);
+                socket.emit('online', check[0])
             }
         });
 
@@ -108,7 +108,7 @@ let listeners = function() {
             let myData = users.filter((u) => u.sock_id === me.id);
             _log('GONE', myData);
 
-            users = users.filter(u => u.sock_id !== socket.id);
+            users = users.filter((u) => u.sock_id !== socket.id);
 
             setTimeout(() => {
                 if(!myData || myData.length === 0) {
@@ -117,11 +117,8 @@ let listeners = function() {
                 }
                 myData = myData[0];
                 let hasReconnected = users.filter((u) => {
-                    if(myData.type === USER_TYPES.SITE) {
-                       return u.license === myData.license && myData.id === me.site_id && myData.type === USER_TYPES.SITE;
-                    } else {
-                        return u.license === myData.license && myData.token === u.token
-                    }
+                    return (myData.type === USER_TYPES.SITE) ? 
+                            (myData.id === u.id) : (u.license === myData.license && myData.token === u.token);
                 });
 
                 if(hasReconnected.length > 0) {
@@ -137,7 +134,7 @@ let listeners = function() {
                     }
                     return;
                 }
-                signalPresense(socket, myData, false);
+                //signalPresense(socket, myData, false);
             }, waitTime);
         })
     });
