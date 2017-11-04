@@ -16,11 +16,11 @@ let init = function(_io) {
 }
 
 let _log = (title, data) => {
-    let allowedLogs = ['ALL_USERS', 'LISTENERS_ON', 'RECONNECTED', 'GONE'];
+    let allowedLogs = ['ALL_USERS', 'LISTENERS_ON', 'RECONNECTED', 'GONE', 'IDENTIFICATION'];
     title = title || "";
     data = data || "";
     if(allowedLogs.indexOf(title) === -1) return;
-    console.log(title, data, users);
+    console.log(title, data);
 }
 
 let waitTime = 3000;
