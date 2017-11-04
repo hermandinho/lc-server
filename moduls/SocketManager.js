@@ -23,7 +23,7 @@ let _log = (title, data) => {
     console.log(title, data);
 }
 
-let waitTime = 5000;
+let waitTime = 3000;
 
 let signalPresense = (socket, data, online) => {
     let eventType = online ? 'online' : 'offline';
@@ -64,7 +64,8 @@ let pushOnlineClients = (socket, license) => {
 let listeners = function() {
     _log('LISTENERS_ON');
     io.on('connection', function(socket) {
-        me = socket
+        me = socket;
+
         /**
          * Identification of both front and backend Users
          */
@@ -108,11 +109,11 @@ let listeners = function() {
             let myData = users.filter((u) => u.sock_id === me.id);
             _log('GONE', myData);
 
-            users = users.filter((u) => u.sock_id !== socket.id);
+            users = users.filter((u) => u.sock_id !== me.id);
 
             setTimeout(() => {
                 if(!myData || myData.length === 0) {
-                    _log('GONE','GONE BUT myData Not Found')
+                    //_log('GONE','GONE BUT myData Not Found')
                     return;
                 }
                 myData = myData[0];
@@ -121,9 +122,9 @@ let listeners = function() {
                             (myData.id === u.id) : (u.license === myData.license && myData.token === u.token);
                 });
 
-                if(hasReconnected.length > 0) {
-                    _log('RECONNECTED');
+                if(hasReconnected.length > 0) {                    
                     if(myData.type === USER_TYPES.VISITOR) {
+                        _log('RECONNECTED', 'SITE');
                         /*hasReconnected[0].url = myData.url;
                         hasReconnected[0].protocol = myData.protocol;
                         hasReconnected[0].origin = myData.origin;
@@ -131,8 +132,9 @@ let listeners = function() {
                         hasReconnected[0].lang = myData.lang;
                         hasReconnected[0].token = myData.token;*/
                         io.to(myData.license + '_' + USER_TYPES.SITE).emit('refresh-user', hasReconnected[0]);
+                    } else {
+                        _log('RECONNECTED', 'CLIENT')
                     }
-                    return;
                 } else {
                     _log('GONE', 'GONE FOREVER ' + myData.sock_id);
                 }
