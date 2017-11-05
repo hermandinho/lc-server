@@ -61,7 +61,7 @@ let pushOnlineClients = (socket, license) => {
 let listeners = function() {
     _log('LISTENERS_ON');
     io.on('connection', function(socket) {
-        me = socket;
+        //me = socket;
 
         /**
          * Identification of both front and backend Users
@@ -111,7 +111,7 @@ let listeners = function() {
             //if(myData.length === 0) return;
             
             setTimeout(() => {
-                console.log("NOW ALL USERS ", users);
+                console.log("NOW ALL USERS : " + users.length + " => ", users);
                 let hasReconnected = users.filter(u => {
                     if(me.type == USER_TYPES.SITE)
                         return me.id == u.id;
