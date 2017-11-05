@@ -70,11 +70,13 @@ let listeners = function() {
             data.sock_id = socket.id;
             _log("IDENTIFICATION", data);
             users.push(data);
+            me = data;
 
             //socket.token = data.token; // For client
-            me.userKey = data.license;
+            /*me.userKey = data.license;
             me.userType = data.type;
-            me.site_id = data.id;
+            me.token = data.token;
+            me.site_id = data.id;*/
           
             let room_id = data.license + '_' + data.type;
 
@@ -103,23 +105,23 @@ let listeners = function() {
         })
 
         socket.on('disconnect', function(){
-            let myData = users.filter((u) => u.sock_id === me.id);
+            //let myData = users.filter((u) => u.sock_id === me.id);
             users = users.filter((u) => u.sock_id !== me.id);
 
-            if(myData.length === 0) return;
+            //if(myData.length === 0) return;
             
             setTimeout(() => {
+                console.log("NOW ALL USERS ", users);
                 let hasReconnected = users.filter(u => {
-                    console.log("USER ", u);
-                    if(myData.type == USER_TYPES.SITE)
-                        return myData.id == u.id;
+                    if(me.type == USER_TYPES.SITE)
+                        return me.id == u.id;
                     else
-                        return u.license == myData.license && myData.token == u.token;
+                        return u.license == me.license && me.token == u.token;
                 })
 
                 if(hasReconnected.length > 0) {
                     console.log("SENDING REFRESH EVENT")
-                    io.to(myData.license + '_' + myData.type).emit('refresh-user', hasReconnected[0]);
+                    io.to(me.license + '_' + me.type).emit('refresh-user', hasReconnected[0]);
                     /*if(myData.type === USER_TYPES.VISITOR) {
                         io.to(myData.license + '_' + USER_TYPES.SITE).emit('refresh-user', hasReconnected[0]);
                     } else {
@@ -127,7 +129,7 @@ let listeners = function() {
                     }*/
                 } else {
                     console.log("FAILED SENDING REFRESH EVENT")
-                    signalPresense(socket, myData, false)
+                    signalPresense(socket, me, false)
                 }
             }, waitTime);
             return;
