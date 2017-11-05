@@ -16,7 +16,7 @@ let init = function(_io) {
 }
 
 let _log = (title, data) => {
-    let allowedLogs = ['ALL_USERS', 'LISTENERS_ON', 'RECONNECTED', 'GONE', 'IDENTIFICATION'];
+    let allowedLogs = ['ALL_USERS', 'LISTENERS_ON', 'RECONNECTED', 'GONE', 'IDENTIFICATION_'];
     title = title || "";
     data = data || "";
     if(allowedLogs.indexOf(title) === -1) return;
@@ -117,7 +117,7 @@ let listeners = function() {
                 })
 
                 if(hasReconnected.length > 0) {
-                    console.log("SENDING REFRESH EVENT TO " + (myData.type === USER_TYPES.SITE) ? 'SITE' : 'VISITOR')
+                    console.log("SENDING REFRESH EVENT")
                     io.to(myData.license + '_' + myData.type).emit('refresh-user', hasReconnected[0]);
                     /*if(myData.type === USER_TYPES.VISITOR) {
                         io.to(myData.license + '_' + USER_TYPES.SITE).emit('refresh-user', hasReconnected[0]);
@@ -125,7 +125,7 @@ let listeners = function() {
 
                     }*/
                 } else {
-                    console.log("FAILED SENDING REFRESH EVENT TO " + (myData.type === USER_TYPES.SITE) ? 'SITE' : 'VISITOR')
+                    console.log("FAILED SENDING REFRESH EVENT")
                     signalPresense(socket, myData, false)
                 }
             }, waitTime);
