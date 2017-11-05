@@ -122,13 +122,13 @@ let listeners = function() {
                 if(hasReconnected.length > 0) {
                     console.log("SENDING REFRESH EVENT")
                     //io.to(me.license + '_' + me.type).emit('refresh-user', hasReconnected[0]);
-                    if(myData.type === USER_TYPES.VISITOR) {
-                        io.to(myData.license + '_' + USER_TYPES.SITE).emit('refresh-user', hasReconnected[0]);
+                    if(me.type === USER_TYPES.VISITOR) {
+                        io.to(me.license + '_' + USER_TYPES.SITE).emit('refresh-user', hasReconnected[0]);
                     } else {
                         /**
                          * TODO NOTIFY CLIENT THAT SITE HAS RECONNECTED
                          */
-                        io.to(myData.license + '_' + USER_TYPES.VISITOR).emit('refresh-user', hasReconnected[0]);
+                        io.to(me.license + '_' + USER_TYPES.VISITOR).emit('refresh-user', hasReconnected[0]);
                     }
                 } else {
                     console.log("FAILED SENDING REFRESH EVENT")
