@@ -110,6 +110,7 @@ let listeners = function() {
             
             setTimeout(() => {
                 let hasReconnected = users.filter(u => {
+                    console.log("USER ", u);
                     if(myData.type == USER_TYPES.SITE)
                         return myData.id == u.id;
                     else
