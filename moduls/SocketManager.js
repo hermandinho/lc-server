@@ -23,7 +23,7 @@ let _log = (title, data) => {
     console.log(title, data);
 }
 
-let waitTime = 3000;
+let waitTime = 5000;
 
 let signalPresense = (socket, data, online) => {
     let eventType = online ? 'online' : 'offline';
