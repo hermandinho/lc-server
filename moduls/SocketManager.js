@@ -16,7 +16,7 @@ let init = function(_io) {
 }
 
 let _log = (title, data) => {
-    let allowedLogs = ['ALL_USERS', 'LISTENERS_ON', 'RECONNECTED', 'GONE', 'IDENTIFICATION_'];
+    let allowedLogs = ['ALL_USERS', 'LISTENERS_ON', 'RECONNECTED', 'GONE', 'IDENTIFICATION_', 'TYPING'];
     title = title || "";
     data = data || "";
     if(allowedLogs.indexOf(title) === -1) return;
@@ -98,6 +98,11 @@ let listeners = function() {
                 //socket.emit('online', check[0])
             }
         });
+
+        socket.on('typing', function(data) {
+            _log('TYPING', data);
+            socket.to(data.license + '_' + USER_TYPES.SITE).emit('typing', data);
+        })
 
         socket.on('message', function(msg) {
             _log("MESSAGE ", msg);
