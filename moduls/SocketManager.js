@@ -71,18 +71,12 @@ let listeners = function() {
             _log("IDENTIFICATION", data);
             users.push(data);
             me = data;
-
-            //socket.token = data.token; // For client
-            /*me.userKey = data.license;
-            me.userType = data.type;
-            me.token = data.token;
-            me.site_id = data.id;*/
           
             let room_id = data.license + '_' + data.type;
 
             socket.join(room_id)
-
-            //signalPresense(socket, data, true);
+            
+            signalPresense(socket, data, true);
 
             _log("ALL_USERS [" + users.length + "]", users);
         })
