@@ -16,7 +16,7 @@ let init = function(_io) {
 }
 
 let _log = (title, data) => {
-    let allowedLogs = ['ALL_USERS', 'LISTENERS_ON', 'RECONNECTED', 'GONE', 'IDENTIFICATION_', 'TYPING'];
+    let allowedLogs = ['ALL_USERS', 'LISTENERS_ON', 'RECONNECTED', 'GONE', 'IDENTIFICATION', 'TYPING'];
     title = title || "";
     data = data || "";
     if(allowedLogs.indexOf(title) === -1) return;
@@ -57,6 +57,56 @@ let pushOnlineClients = (socket, license) => {
         //
     }
 }
+let addUser = (user) => {
+    let check = users.filter(u => {
+        if(user.type === USER_TYPES.SITE) {
+            return u.id === user.id
+        } else {
+            return u.token === user.token && u.license === user.license;
+        }
+    })
+
+    if(!check || check.length === 0) {
+        users.push(user);
+    } else {
+        //console.log('CANNOT ADD NEW USER');
+    }
+}
+
+let removeUser = (user) => {
+    let check = users.filter(u => {
+        if(user.type === USER_TYPES.SITE) {
+            return u.id === user.id
+        } else {
+            return u.token === user.token && u.license === user.license;
+        }
+    })
+
+    if(check && check.length === 1) {
+        users = users.filter(u => {
+            if(user.type === USER_TYPES.SITE) {
+                return u.id !== user.id
+            } else {
+                return u.token !== user.token && u.license !== user.license;
+            }
+        })
+        //console.log('REMOVED USER', JSON.stringify(user));
+    } else {
+        //console.log('CANNOT REMOVE ', user);
+    }
+}
+
+let updateData = (data) => {
+    users.map(u => {
+        if(data.type === USER_TYPES.SITE && data.id === u .id) {
+            console.log('UPDATE SITE');
+        } else {
+            console.log('UPDATE CLIENT');
+            u.title = data.title;
+            u.url = data.url;
+        }
+    })
+}
 
 let listeners = function() {
     _log('LISTENERS_ON');
@@ -67,9 +117,15 @@ let listeners = function() {
          * Identification of both front and backend Users
          */
         socket.on('identify', function(data) {
+            socket.userKey = data.id;
+            socket.license = data.license;
+            socket.userType = data.type;
+            socket.userToken = data.token;
+
             data.sock_id = socket.id;
-            _log("IDENTIFICATION", data);
-            users.push(data);
+            addUser(data);
+            _log("IDENTIFICATION", users.length);
+            //_log("IDENTIFICATION", users);
             me = data;
           
             let room_id = data.license + '_' + data.type;
@@ -82,14 +138,16 @@ let listeners = function() {
         })
 
         socket.on('get-my-online-clients', function(data) {
-            //pushOnlineClients(socket, data.license);
+            pushOnlineClients(socket, data.license);
         })
 
         socket.on('is-site-online', function(data) {
             let check = users.filter((u) => u.type === USER_TYPES.SITE && u.license === data.license)
 
             if(check.length > 0) {
-                //socket.emit('online', check[0])
+                socket.emit('online', check[0])
+            } else {
+                socket.emit('offline', check[0], data, users);
             }
         });
 
@@ -104,71 +162,28 @@ let listeners = function() {
         })
 
         socket.on('disconnect', function(){
-            //let myData = users.filter((u) => u.sock_id === me.id);
-            users = users.filter((u) => u.sock_id !== me.sock_id);
-
-            //if(myData.length === 0) return;
+            users = users.filter((u) => u.sock_id !== socket.sock_id);
+            //removeUser(me);
             
             setTimeout(() => {
-                console.log("NOW ALL USERS : " + users.length + " => ", users);
+                //console.log("GONE", socket.userKey, socket.userType, socket.userToken, me.userType);
                 let hasReconnected = users.filter(u => {
-                    if(me.type == USER_TYPES.SITE)
-                        return me.id == u.id;
+                    if(socket.userType === USER_TYPES.SITE)
+                        return socket.userKey === u.id;
                     else
-                        return u.license == me.license && me.token == u.token;
+                        return u.license === socket.license && socket.userToken === u.token;
                 })
-
+                
                 if(hasReconnected.length > 0) {
-                    console.log("SENDING REFRESH EVENT")
-                    //io.to(me.license + '_' + me.type).emit('refresh-user', hasReconnected[0]);
-                    if(me.type === USER_TYPES.VISITOR) {
-                        io.to(me.license + '_' + USER_TYPES.SITE).emit('refresh-user', hasReconnected[0]);
+                    updateData(me);
+                    if(socket.userType === USER_TYPES.VISITOR) {
+                        io.to(socket.license + '_' + USER_TYPES.SITE).emit('refresh-user', me);
                     } else {
-                        /**
-                         * TODO NOTIFY CLIENT THAT SITE HAS RECONNECTED
-                         */
-                        io.to(me.license + '_' + USER_TYPES.VISITOR).emit('refresh-user', hasReconnected[0]);
+                        io.to(socket.license + '_' + USER_TYPES.VISITOR).emit('refresh-user', me);
                     }
                 } else {
-                    console.log("FAILED SENDING REFRESH EVENT")
                     signalPresense(socket, me, false)
                 }
-            }, waitTime);
-            return;
-            
-            
-            
-
-            setTimeout(() => {
-                if(!myData || myData.length === 0) {
-                    //_log('GONE','GONE BUT myData Not Found')
-                    return;
-                }
-                myData = myData[0];
-                let hasReconnected = users.filter((u) => {
-                    if(myData.type == USER_TYPES.SITE)
-                        return myData.id == u.id;
-                    else
-                        return u.license == myData.license && myData.token == u.token;
-                });
-
-                if(hasReconnected.length > 0) {                    
-                    if(myData.type === USER_TYPES.VISITOR) {
-                        _log('RECONNECTED', 'VISITOR');
-                        /*hasReconnected[0].url = myData.url;
-                        hasReconnected[0].protocol = myData.protocol;
-                        hasReconnected[0].origin = myData.origin;
-                        hasReconnected[0].pathname = myData.pathname;
-                        hasReconnected[0].lang = myData.lang;
-                        hasReconnected[0].token = myData.token;*/
-                        io.to(myData.license + '_' + USER_TYPES.SITE).emit('refresh-user', hasReconnected[0]);
-                    } else {
-                        _log('RECONNECTED', 'SITE') 
-                    }
-                } else {
-                    _log('GONE', myData);
-                }
-                //signalPresense(socket, myData, false);
             }, waitTime);
         })
     });
