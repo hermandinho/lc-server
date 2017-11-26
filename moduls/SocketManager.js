@@ -1,4 +1,5 @@
 let io = null,
+    api = null,
     users = [],
     me = null;
 
@@ -7,16 +8,19 @@ const USER_TYPES = {
     SITE: 1
 };
 
-let init = function(_io) {
+let init = function(_io, _api) {
     if(!io) {
         io = _io;
+    }
+    if(!api) {
+        api = _api
     }
 
     listeners();
 }
 
 let _log = (title, data) => {
-    let allowedLogs = ['ALL_USERS', 'LISTENERS_ON', 'RECONNECTED', 'GONE', 'IDENTIFICATION', 'TYPING'];
+    let allowedLogs = ['_ALL_USERS', '_LISTENERS_ON', '_RECONNECTED', '_GONE', '_IDENTIFICATION_', '_TYPING'];
     title = title || "";
     data = data || "";
     if(allowedLogs.indexOf(title) === -1) return;
@@ -158,6 +162,7 @@ let listeners = function() {
 
         socket.on('message', function(msg) {
             _log("MESSAGE ", msg);
+            api.saveMessage(msg);
             socket.to(socket.userKey).emit('message', msg);
         })
 
