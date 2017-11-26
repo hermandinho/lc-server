@@ -164,6 +164,8 @@ let listeners = function() {
             _log("MESSAGE ", msg);
             api.saveMessage(msg);
             socket.to(socket.userKey).emit('message', msg);
+            socket.in(socket.license + '_' + USER_TYPES.SITE).emit('message', msg);
+            
         })
 
         socket.on('disconnect', function(){
